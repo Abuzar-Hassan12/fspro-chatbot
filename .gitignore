@@ -1,0 +1,17 @@
+# .gitignore
+
+# Ignore Python environments
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE config
+.vscode/
+.idea/

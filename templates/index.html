@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FSPro Chatbot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="shortcut icon" href="/static/images/FSPro_logo.jpg" type="image/x-icon">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="top_sidebar">
+            <div class="avatar"><img src="/static/images/FSPro_logo.jpg" alt="PSPro"></div>
+            <p>FSPro Chat</p>
+        </div>
+        
+        <div class="history_sidebar">
+            <section class="searchbar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search chat..."/>
+            </section>
+            
+            <h3 class="history-title">Recent Chats</h3>
+            <div class="history-list" id="conversation-list">
+                <!-- Conversations will be loaded here -->
+            </div>
+            
+            <div class="new-chat-section">
+                <button class="new-chat-btn" onclick="startNewChat()">
+                    <i class="fas fa-plus"></i> New Chat
+                </button>
+            </div>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="content">
+        <div class="chat-header">
+            <div class="header-title">FSPro Chat Assistant</div>
+            <div class="header-icons">
+                <div class="header-icon" title="Analytics"><i class="fas fa-chart-line"></i></div>
+                <div class="header-icon" title="Settings"><i class="fas fa-cog"></i></div>
+                <div class="header-icon" title="User Profile"><i class="fas fa-user"></i></div>
+            </div>
+        </div>
+        
+        <div class="chat-container" id="chat-box">
+            <!-- Welcome message -->
+            <div id="welcome" class="message bot-message">
+                <div class="message-header">
+                    <div class="avatar">FP</div>
+                    <div class="username">FSPro Assistant</div>
+                </div>
+                <div class="message-content">
+                    <p>Hello! I'm FSPro Assistant, your AI-powered development helper. How can I assist you with your project today?</p>
+                </div>
+                <div class="message-time">Just now</div>
+            </div>
+            
+            <!-- Chat messages will appear here -->
+        </div>
+        
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="user-input" placeholder="Type your message here...">
+            <button class="send-btn" onclick="sendMessage()">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="copyright">© 2023 FSPro Chatbot | AI Assistant for Developers</div>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Documentation</a>
+                    <a href="#">Support</a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
