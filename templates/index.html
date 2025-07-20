@@ -9,11 +9,25 @@
     <link rel="shortcut icon" href="/static/images/FSPro_logo.jpg" type="image/x-icon">
 </head>
 <body>
+<!-- Mobile Header -->
+    <div class="mobile-header">
+        <div class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="mobile-title">FSPro Chat</div>
+        <div class="user-icon">
+            <i class="fas fa-user"></i>
+        </div>
+    </div>
+    
     <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="top_sidebar">
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
             <div class="avatar"><img src="/static/images/FSPro_logo.jpg" alt="PSPro"></div>
-            <p>FSPro Chat</p>
+            <h3>FSPro Chat</h3>
+            <div class="close-btn" id="closeSidebar">
+                <i class="fas fa-times"></i>
+            </div>
         </div>
         
         <div class="history_sidebar">
@@ -22,9 +36,33 @@
                 <input type="text" placeholder="Search chat..."/>
             </section>
             
-            <h3 class="history-title">Recent Chats</h3>
+            <h3 class="history-title"><i class="fas fa-history"></i> Recent Chats</h3>
             <div class="history-list" id="conversation-list">
-                <!-- Conversations will be loaded here -->
+                <div class="history-item">
+                    <i class="fas fa-comment"></i>
+                    <span>Learning Python Basics</span>
+                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                </div>
+                <div class="history-item">
+                    <i class="fas fa-comment"></i>
+                    <span>E-commerce Project Help</span>
+                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                </div>
+                <div class="history-item">
+                    <i class="fas fa-comment"></i>
+                    <span>JavaScript Debugging</span>
+                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                </div>
+                <div class="history-item">
+                    <i class="fas fa-comment"></i>
+                    <span>React Component Help</span>
+                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                </div>
+                <div class="history-item">
+                    <i class="fas fa-comment"></i>
+                    <span>Database Design</span>
+                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                </div>
             </div>
             
             <div class="new-chat-section">
@@ -38,25 +76,38 @@
     <!-- Main Content -->
     <main class="content">
         <div class="chat-header">
-            <div class="header-title">FSPro Chat Assistant</div>
-            <div class="header-icons">
-                <div class="header-icon" title="Analytics"><i class="fas fa-chart-line"></i></div>
-                <div class="header-icon" title="Settings"><i class="fas fa-cog"></i></div>
-                <div class="header-icon" title="User Profile"><i class="fas fa-user"></i></div>
+            <div class="header-title">
+                <i class="fas fa-robot"></i> FSPro Chat Assistant
             </div>
         </div>
         
         <div class="chat-container" id="chat-box">
             <!-- Welcome message -->
-            <div id="welcome" class="message bot-message">
-                <div class="message-header">
-                    <div class="avatar">FP</div>
-                    <div class="username">FSPro Assistant</div>
+            <div id="welcome" class="welcome-container">
+                <div class="welcome-card">
+                    <h2>Welcome to FSPro Assistant</h2>
+                    <p>I'm your AI-powered development helper. Choose an assistant or start chatting:</p>
+                    
+                    <div class="assistant-cards">
+                        <div class="assistant-card" onclick="loadExpert('elearning')" data-bot="elearning">
+                            <i class="fas fa-graduation-cap"></i>
+                            <h3>E-Learning Assistant</h3>
+                            <p>Course guidance, learning paths, and educational resources</p>
+                        </div>
+                        
+                        <div class="assistant-card" onclick="loadExpert('shopping')" data-bot="shopping">
+                            <i class="fas fa-shopping-cart"></i>
+                            <h3>Shopping Assistant</h3>
+                            <p>Product recommendations, deals, and shopping support</p>
+                        </div>
+                        
+                        <div class="assistant-card" onclick="loadExpert('technical')" data-bot="technical">
+                            <i class="fas fa-code"></i>
+                            <h3>Technical Assistant</h3>
+                            <p>Code help, debugging, and development guidance</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="message-content">
-                    <p>Hello! I'm FSPro Assistant, your AI-powered development helper. How can I assist you with your project today?</p>
-                </div>
-                <div class="message-time">Just now</div>
             </div>
             
             <!-- Chat messages will appear here -->

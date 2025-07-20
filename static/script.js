@@ -3,23 +3,83 @@ const input = document.getElementById("user-input");
 const chatBox = document.getElementById("chat-box");
 const welcomeScreen = document.getElementById("welcome");
 const convoList = document.getElementById("conversation-list");
+const sidebar = document.getElementById("sidebar");
+const menuToggle = document.getElementById("menuToggle");
+const closeSidebar = document.getElementById("closeSidebar");
 
 let currentSessionId = null;
 let currentChat = [];
 let allConversations = [];
+let isProcessing = false;
+
+// DOM Content Loaded ensures safe element access
+document.addEventListener("DOMContentLoaded", () => {
+    initFromStorage();
+    setupEventListeners();
+});
+
+function setupEventListeners() {
+    // Input handling
+    input.addEventListener("keydown", handleInputKeydown);
+    
+    // UI interactions
+    menuToggle.addEventListener("click", toggleSidebar);
+    closeSidebar.addEventListener("click", closeSidebarHandler);
+    
+    // Chat actions
+    document.querySelector(".send-btn").addEventListener("click", sendMessage);
+    document.querySelector(".new-chat-btn").addEventListener("click", startNewChat);
+}
+
+function initFromStorage() {
+    try {
+        const savedChats = localStorage.getItem('fspro_chats');
+        const activeChat = localStorage.getItem('fspro_active_chat');
+        
+        if (savedChats) {
+            allConversations = JSON.parse(savedChats) || [];
+        }
+        
+        if (activeChat) {
+            const chatData = JSON.parse(activeChat);
+            currentSessionId = chatData.sessionId;
+            currentChat = chatData.chat || [];
+        }
+        
+        updateSidebar();
+        renderChat();
+    } catch (error) {
+        console.error("Error loading from localStorage:", error);
+        showError("Failed to load chat history");
+    }
+}
+
+function saveToStorage() {
+    try {
+        localStorage.setItem('fspro_chats', JSON.stringify(allConversations));
+        
+        if (currentSessionId) {
+            localStorage.setItem('fspro_active_chat', JSON.stringify({
+                sessionId: currentSessionId,
+                chat: currentChat
+            }));
+        }
+    } catch (error) {
+        console.error("Error saving to localStorage:", error);
+    }
+}
 
 function getCurrentTime() {
     const now = new Date();
-    return now.getHours().toString().padStart(2, '0') + ':' + 
-           now.getMinutes().toString().padStart(2, '0');
+    return now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 }
 
 function createMessageElement(msg) {
     const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message');
-    messageDiv.classList.add(msg.sender === 'user' ? 'user-message' : 'bot-message');
+    messageDiv.classList.add('message', msg.sender === 'user' ? 'user-message' : 'bot-message');
     
-    const time = getCurrentTime();
+    // Sanitize and format message content
+    const formattedText = formatMessageText(msg.text);
     
     messageDiv.innerHTML = `
         <div class="message-header">
@@ -27,47 +87,109 @@ function createMessageElement(msg) {
             <div class="username">${msg.sender === 'user' ? 'You' : 'FSPro Assistant'}</div>
         </div>
         <div class="message-content">
-            ${msg.text}
+            ${formattedText}
         </div>
-        <div class="message-time">${time}</div>
+        <div class="message-time">${getCurrentTime()}</div>
     `;
     
     return messageDiv;
 }
 
+function formatMessageText(text) {
+    // Basic XSS protection
+    const sanitizedText = text
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    
+    // Formatting conversions
+    return sanitizedText
+        .replace(/```([\s\S]*?)```/g, '<pre>$1</pre>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" class="msg-image">')
+        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+        .replace(/\n/g, '<br>');
+}
+
 function renderChat() {
-    if (currentChat.length > 0) {
-        welcomeScreen.style.display = "none";
-    } else {
-        welcomeScreen.style.display = "block";
-        return;
+    try {
+        welcomeScreen.style.display = currentChat.length ? "none" : "flex";
+        
+        // Clear chat except the welcome message
+        const children = Array.from(chatBox.children);
+        for (let i = 1; i < children.length; i++) {
+            chatBox.removeChild(children[i]);
+        }
+        
+        // Add all messages
+        currentChat.forEach(msg => {
+            chatBox.appendChild(createMessageElement(msg));
+        });
+        
+        scrollToBottom();
+    } catch (error) {
+        console.error("Error rendering chat:", error);
     }
-    
-    while (chatBox.children.length > 1) {
-        chatBox.removeChild(chatBox.lastChild);
+}
+
+function handleInputKeydown(e) {
+    if (e.key === "Enter" && !e.shiftKey && !isProcessing) {
+        e.preventDefault();
+        sendMessage();
     }
-    
-    currentChat.forEach(msg => {
-        chatBox.appendChild(createMessageElement(msg));
-    });
-    
-    scrollToBottom();
 }
 
 function sendMessage() {
+    if (isProcessing) return;
+    
     const msg = input.value.trim();
     if (!msg) return;
     
-    currentChat.push({ 
-        sender: "user", 
-        text: `<p>${msg}</p>`,
-        session_id: currentSessionId
-    });
-    renderChat();
-    input.value = "";
-    input.focus();
-    
-    // Show animated typing indicator
+    try {
+        // Add user message
+        currentChat.push({ 
+            sender: "user", 
+            text: msg,
+            session_id: currentSessionId
+        });
+        
+        saveToStorage();
+        renderChat();
+        input.value = "";
+        isProcessing = true;
+        input.disabled = true;
+        
+        showTypingIndicator();
+        
+        // Send to backend
+        fetch("/chat", {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({ 
+                message: msg,
+                session_id: currentSessionId
+            })
+        })
+        .then(handleResponse)
+        .catch(handleError)
+        .finally(() => {
+            isProcessing = false;
+            input.disabled = false;
+            input.focus();
+        });
+    } catch (error) {
+        console.error("Error sending message:", error);
+        handleError(error);
+        isProcessing = false;
+        input.disabled = false;
+    }
+}
+
+function showTypingIndicator() {
     const typingDiv = document.createElement('div');
     typingDiv.id = "typing";
     typingDiv.className = "message bot-message";
@@ -87,111 +209,174 @@ function sendMessage() {
     `;
     chatBox.appendChild(typingDiv);
     scrollToBottom();
+}
 
-    // Send to backend
-    fetch("/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            message: msg,
-            session_id: currentSessionId
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById("typing")?.remove();
-        currentSessionId = data.session_id;
-        currentChat.push({ 
-            sender: "bot", 
-            text: data.response,
-            session_id: currentSessionId
-        });
-        renderChat();
-    })
-    .catch(() => {
-        document.getElementById("typing")?.remove();
-        currentChat.push({ 
-            sender: "bot", 
-            text: `<p style="color: var(--error);">❌ Error processing response. Please try again.</p>`,
-            session_id: currentSessionId
-        });
-        renderChat();
+function handleResponse(response) {
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+}
+
+function processBotResponse(data) {
+    document.getElementById("typing")?.remove();
+    
+    currentSessionId = data.session_id || Date.now().toString();
+    
+    // Add bot response
+    currentChat.push({ 
+        sender: "bot", 
+        text: data.response,
+        session_id: currentSessionId
     });
+    
+    saveToStorage();
+    renderChat();
+}
+
+function handleError(error) {
+    console.error('Error:', error);
+    document.getElementById("typing")?.remove();
+    
+    currentChat.push({ 
+        sender: "bot", 
+        text: "❌ Error processing response. Please try again later.",
+        session_id: currentSessionId
+    });
+    
+    saveToStorage();
+    renderChat();
 }
 
 function startNewChat() {
-    if (currentChat.length) {
-        allConversations.push({
-            id: currentSessionId,
-            title: getConversationTitle(),
-            chat: [...currentChat],
-            timestamp: Date.now()
-        });
-        updateSidebar();
+    try {
+        if (currentChat.length) {
+            allConversations.push({
+                id: currentSessionId,
+                title: getConversationTitle(),
+                chat: [...currentChat],
+                timestamp: Date.now()
+            });
+            saveToStorage();
+            updateSidebar();
+        }
+        
+        // Reset current chat
+        currentSessionId = null;
+        currentChat = [];
+        localStorage.removeItem('fspro_active_chat');
+        
+        renderChat();
+        input.value = "";
+        input.focus();
+    } catch (error) {
+        console.error("Error starting new chat:", error);
+        showError("Failed to start new chat");
     }
-    
-    currentSessionId = null;
-    currentChat = [];
-    renderChat();
-    input.value = "";
 }
 
 function getConversationTitle() {
-    if (currentChat.length < 2) return "New Chat";
+    if (!currentChat.length) return "New Chat";
     
-    const firstUserMsg = currentChat.find(m => m.sender === "user")?.text || "";
-    const cleanText = firstUserMsg.replace(/<[^>]*>/g, '');
-    return cleanText.length > 25 ? cleanText.substring(0, 25) + '...' : cleanText;
+    // Find the first substantial user message
+    const userMessage = currentChat.find(msg => 
+        msg.sender === "user" && 
+        msg.text.trim().split(/\s+/).length > 3
+    );
+    
+    const firstUserMsg = userMessage?.text || currentChat[0]?.text || "";
+    const cleanText = firstUserMsg.replace(/<[^>]*>/g, '').trim();
+    
+    return cleanText.length > 25 
+        ? cleanText.substring(0, 25) + '...' 
+        : cleanText || "New Chat";
 }
 
 function updateSidebar() {
-    convoList.innerHTML = "";
-    
-    // Sort conversations by timestamp (newest first)
-    allConversations.sort((a, b) => b.timestamp - a.timestamp);
-    
-    allConversations.forEach((convo, index) => {
-        const li = document.createElement('div');
-        li.className = "history-item";
-        li.dataset.id = convo.id;
-        li.innerHTML = `
-            <i class="fas fa-comment"></i> ${convo.title}
-            <span class="delete-btn">&times;</span>
-        `;
+    try {
+        convoList.innerHTML = "";
         
-        li.onclick = () => loadChat(index);
+        // Sort conversations by timestamp (newest first)
+        const sortedConversations = [...allConversations].sort((a, b) => b.timestamp - a.timestamp);
         
-        const delBtn = li.querySelector('.delete-btn');
-        delBtn.onclick = (e) => {
-            e.stopPropagation();
-            allConversations.splice(index, 1);
-            updateSidebar();
-            if (currentSessionId === convo.id) {
-                startNewChat();
-            }
-        };
+        sortedConversations.forEach((convo, index) => {
+            const li = document.createElement('div');
+            li.className = "history-item";
+            li.dataset.id = convo.id;
+            li.innerHTML = `
+                <i class="fas fa-comment"></i> ${convo.title}
+                <button class="delete-btn"><i class="fas fa-trash"></i></button>
+            `;
+            
+            li.addEventListener('click', () => loadChat(index));
+            
+            const delBtn = li.querySelector('.delete-btn');
+            delBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteConversation(index);
+            });
+            
+            convoList.appendChild(li);
+        });
+    } catch (error) {
+        console.error("Error updating sidebar:", error);
+    }
+}
+
+function deleteConversation(index) {
+    try {
+        const convo = allConversations[index];
         
-        convoList.appendChild(li);
-    });
+        // Remove from storage
+        allConversations.splice(index, 1);
+        saveToStorage();
+        updateSidebar();
+        
+        // If it was the active chat, start a new one
+        if (currentSessionId === convo.id) {
+            startNewChat();
+        }
+    } catch (error) {
+        console.error("Error deleting conversation:", error);
+        showError("Failed to delete conversation");
+    }
 }
 
 function loadChat(index) {
-    const convo = allConversations[index];
-    currentSessionId = convo.id;
-    currentChat = [...convo.chat];
-    renderChat();
+    try {
+        const convo = allConversations[index];
+        currentSessionId = convo.id;
+        currentChat = [...convo.chat];
+        saveToStorage();
+        renderChat();
+        closeSidebarHandler();
+        input.focus();
+    } catch (error) {
+        console.error("Error loading chat:", error);
+        showError("Failed to load conversation");
+    }
 }
 
 function scrollToBottom() {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-    }
-});
+function toggleSidebar() {
+    sidebar.classList.toggle('active');
+}
 
-// Initialize
-updateSidebar();
+function closeSidebarHandler() {
+    sidebar.classList.remove('active');
+}
+
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = "message bot-message error-message";
+    errorDiv.innerHTML = `
+        <div class="message-content">
+            <i class="fas fa-exclamation-circle"></i> ${message}
+        </div>
+    `;
+    chatBox.appendChild(errorDiv);
+    scrollToBottom();
+}
