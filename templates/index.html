@@ -23,7 +23,7 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <div class="avatar"><img src="/static/images/FSPro_logo.jpg" alt="PSPro"></div>
+            <img src="/static/images/FSPro_logo.jpg" alt="PSPro">
             <h3>FSPro Chat</h3>
             <div class="close-btn" id="closeSidebar">
                 <i class="fas fa-times"></i>
@@ -38,35 +38,12 @@
             
             <h3 class="history-title"><i class="fas fa-history"></i> Recent Chats</h3>
             <div class="history-list" id="conversation-list">
-                <div class="history-item">
-                    <i class="fas fa-comment"></i>
-                    <span>Learning Python Basics</span>
-                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
-                </div>
-                <div class="history-item">
-                    <i class="fas fa-comment"></i>
-                    <span>E-commerce Project Help</span>
-                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
-                </div>
-                <div class="history-item">
-                    <i class="fas fa-comment"></i>
-                    <span>JavaScript Debugging</span>
-                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
-                </div>
-                <div class="history-item">
-                    <i class="fas fa-comment"></i>
-                    <span>React Component Help</span>
-                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
-                </div>
-                <div class="history-item">
-                    <i class="fas fa-comment"></i>
-                    <span>Database Design</span>
-                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
-                </div>
+                <!-- This will be dynamically populated -->
             </div>
             
             <div class="new-chat-section">
-                <button class="new-chat-btn" onclick="startNewChat()">
+                <!-- IMPORTANT: onclick is removed, script.js handles this -->
+                <button class="new-chat-btn">
                     <i class="fas fa-plus"></i> New Chat
                 </button>
             </div>
@@ -82,26 +59,26 @@
         </div>
         
         <div class="chat-container" id="chat-box">
-            <!-- Welcome message -->
+            <!-- Welcome message (RESTORED TO YOUR ORIGINAL) -->
             <div id="welcome" class="welcome-container">
                 <div class="welcome-card">
                     <h2>Welcome to FSPro Assistant</h2>
                     <p>I'm your AI-powered development helper. Choose an assistant or start chatting:</p>
                     
                     <div class="assistant-cards">
-                        <div class="assistant-card" onclick="loadExpert('elearning')" data-bot="elearning">
+                        <div class="assistant-card" data-bot="elearning">
                             <i class="fas fa-graduation-cap"></i>
                             <h3>E-Learning Assistant</h3>
                             <p>Course guidance, learning paths, and educational resources</p>
                         </div>
                         
-                        <div class="assistant-card" onclick="loadExpert('shopping')" data-bot="shopping">
+                        <div class="assistant-card" data-bot="shopping">
                             <i class="fas fa-shopping-cart"></i>
                             <h3>Shopping Assistant</h3>
                             <p>Product recommendations, deals, and shopping support</p>
                         </div>
                         
-                        <div class="assistant-card" onclick="loadExpert('technical')" data-bot="technical">
+                        <div class="assistant-card" data-bot="technical">
                             <i class="fas fa-code"></i>
                             <h3>Technical Assistant</h3>
                             <p>Code help, debugging, and development guidance</p>
@@ -109,13 +86,13 @@
                     </div>
                 </div>
             </div>
-            
             <!-- Chat messages will appear here -->
         </div>
         
         <div class="chat-input-container">
             <input type="text" class="chat-input" id="user-input" placeholder="Type your message here...">
-            <button class="send-btn" onclick="sendMessage()">
+            <!-- IMPORTANT: onclick is removed, script.js handles this -->
+            <button class="send-btn">
                 <i class="fas fa-paper-plane"></i>
             </button>
         </div>
