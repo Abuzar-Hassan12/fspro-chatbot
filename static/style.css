@@ -394,6 +394,39 @@ body {
 /* =====================
    ASSISTANT CARDS 
    ===================== */
+
+
+   /* style.css */
+
+/* ... (existing .assistant-card styles) ... */
+
+/* NEW CSS for the single card layout */
+.assistant-cards.single-card-layout {
+    display: flex;
+    justify-content: center; /* Center the card horizontally */
+    margin-top: 30px;
+}
+
+.assistant-cards .info-card {
+    max-width: 500px; /* Give it a max-width so it doesn't look too wide */
+    width: 100%;
+    cursor: default; /* Make it not look clickable */
+    background: white;
+    border-color: rgba(26, 82, 118, 0.1);
+}
+
+.assistant-cards .info-card:hover {
+    transform: translateY(0); /* Disable the hover lift effect */
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+
+.assistant-cards .info-card:before {
+    transform: scaleX(1); /* Keep the top border visible */
+}
+
+.assistant-cards .info-card i {
+    color: var(--primary); /* Use the primary color for the icon */
+}
 .assistant-cards {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
