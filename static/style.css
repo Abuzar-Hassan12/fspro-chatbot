@@ -1,3 +1,6 @@
+/* =====================
+   BASE & RESETS 
+   ===================== */
 * {
     margin: 0;
     padding: 0;
@@ -37,7 +40,9 @@ body {
     overflow: hidden;
 }
 
-/* ---------- Mobile Header ---------- */
+/* =====================
+   MOBILE HEADER 
+   ===================== */
 .mobile-header {
     display: none;
     padding: 15px 20px;
@@ -66,7 +71,9 @@ body {
     transform: scale(1.1);
 }
 
-/* ---------- Sidebar Styles ---------- */
+/* =====================
+   SIDEBAR 
+   ===================== */
 .sidebar {
     width: 300px;
     background: linear-gradient(to bottom, var(--sidebar-header), var(--sidebar-bg));
@@ -117,6 +124,9 @@ body {
     cursor: pointer;
     display: none;
     transition: var(--transition);
+    color: rgba(255, 255, 255, 0.8);
+    background: transparent;
+    border: none;
 }
 
 .close-btn:hover {
@@ -290,7 +300,9 @@ body {
     transform: rotate(90deg);
 }
 
-/* ---------- Main Content Styles ---------- */
+/* =====================
+   MAIN CONTENT 
+   ===================== */
 .content {
     flex: 1;
     display: flex;
@@ -328,24 +340,19 @@ body {
     color: var(--accent);
 }
 
-/* Enhanced Chat Container for Mobile */
 .chat-container {
     flex: 1;
     padding: 30px;
     display: flex;
     flex-direction: column;
     background: linear-gradient(to bottom, #f5fbff, #f0f7ff);
-    padding-bottom: 120px; /* Extra padding for mobile devices */
+    padding-bottom: 120px;
     overflow-y: auto;
 }
 
-/* Mobile scrolling fix */
-@media (max-width: 900px) {
-    .chat-container {
-        padding-bottom: 180px; /* More padding for mobile footer */
-    }
-}
-
+/* =====================
+   WELCOME SECTION 
+   ===================== */
 .welcome-container {
     display: flex;
     flex-direction: column;
@@ -355,38 +362,41 @@ body {
     text-align: center;
     padding: 20px;
     animation: fadeIn 0.8s ease;
+    margin-bottom: 40px;
 }
 
 .welcome-card {
     max-width: 1000px;
     width: 100%;
-    background: white;
+    background: linear-gradient(to bottom, var(--sidebar-header), var(--sidebar-bg));
     border-radius: 16px;
     padding: 40px;
     box-shadow: var(--card-shadow);
-    border: 1px solid rgba(26, 82, 118, 0.1);
     animation: cardAppear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .welcome-card h2 {
     font-size: 32px;
     margin-bottom: 15px;
-    color: var(--primary);
-    background: linear-gradient(45deg, var(--primary), var(--accent));
+    color: white;
+    background: linear-gradient(45deg, white, var(--accent));
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .welcome-card p {
     font-size: 18px;
     margin-bottom: 30px;
-    color: #555;
+    color: #fefdfd;
 }
 
+/* =====================
+   ASSISTANT CARDS 
+   ===================== */
 .assistant-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 25px;
     margin-top: 30px;
 }
@@ -466,7 +476,9 @@ body {
     color: var(--technical);
 }
 
-/* Message styles */
+/* =====================
+   MESSAGES 
+   ===================== */
 .message {
     max-width: 80%;
     padding: 18px;
@@ -562,7 +574,9 @@ body {
     margin-top: 8px;
 }
 
-/* Chat input */
+/* =====================
+   CHAT INPUT 
+   ===================== */
 .chat-input-container {
     padding: 20px 30px;
     background-color: var(--card-bg);
@@ -624,7 +638,9 @@ body {
     transform: rotate(20deg);
 }
 
-/* Enhanced Typing Indicator */
+/* =====================
+   TYPING INDICATOR 
+   ===================== */
 .typing-indicator {
     display: inline-flex;
     align-items: center;
@@ -664,7 +680,9 @@ body {
     }
 }
 
-/* Enhanced Footer for Mobile */
+/* =====================
+   FOOTER 
+   ===================== */
 .footer {
     background: linear-gradient(to right, var(--primary), var(--primary-dark));
     color: var(--text-light);
@@ -675,19 +693,11 @@ body {
     z-index: 10;
 }
 
-@media (max-width: 900px) {
-    .footer {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-    }
-}
-
 .footer-content {
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
 }
 
@@ -695,38 +705,9 @@ body {
     opacity: 0.9;
 }
 
-.footer-links {
-    display: flex;
-    gap: 20px;
-}
-
-.footer-links a {
-    color: rgba(255, 255, 255, 0.9);
-    text-decoration: none;
-    transition: var(--transition);
-    position: relative;
-}
-
-.footer-links a:hover {
-    color: white;
-}
-
-.footer-links a:after {
-    content: '';
-    position: absolute;
-    bottom: -3px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: white;
-    transition: var(--transition);
-}
-
-.footer-links a:hover:after {
-    width: 100%;
-}
-
-/* Animation */
+/* =====================
+   ANIMATIONS 
+   ===================== */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -749,7 +730,9 @@ body {
     }
 }
 
-/* Enhanced Responsive Design */
+/* =====================
+   RESPONSIVE DESIGN 
+   ===================== */
 @media (max-width: 1200px) {
     .sidebar {
         width: 260px;
@@ -811,7 +794,7 @@ body {
     }
 }
 
-/* Mobile responsiveness fixes */
+/* Mobile responsiveness */
 @media (max-width: 900px) {
     body {
         flex-direction: column;
@@ -852,7 +835,7 @@ body {
     
     .chat-container {
         padding: 20px 15px;
-        padding-bottom: 180px; /* Extra space for mobile footer */
+        padding-bottom: 180px;
     }
     
     .message {
@@ -867,6 +850,7 @@ body {
     }
     
     .welcome-card {
+        margin-top: 0;
         padding: 25px 20px;
     }
     
@@ -888,11 +872,18 @@ body {
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
+    
+    /* Fix footer positioning */
+    .footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
 }
 
 @media (max-width: 768px) {
     .assistant-cards {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: 1fr;
         gap: 15px;
     }
     
@@ -1056,10 +1047,6 @@ body {
         padding: 12px 15px;
         font-size: 13px;
     }
-    
-    .footer-links {
-        gap: 10px 15px;
-    }
 }
 
 @media (max-width: 480px) {
@@ -1093,17 +1080,6 @@ body {
     
     .assistant-card {
         min-height: 180px;
-    }
-    
-    .footer-content {
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .footer-links {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 8px 12px;
     }
 }
 
@@ -1172,19 +1148,8 @@ body {
     .history_sidebar {
         max-height: 200px;
     }
-}
-
-/* Landscape orientation adjustments */
-@media (max-width: 900px) and (orientation: landscape) {
-    .sidebar {
-        width: 50%;
-    }
     
-    .history_sidebar {
-        max-height: 200px;
-    }
-    
-    .chat-container {
-        padding-bottom: 160px;
+    .welcome-container {
+        margin-top: 50px;
     }
 }

@@ -16,30 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentChat = [];
     let allConversations = [];
     let isProcessing = false;
-
-    function setupEventListeners() {
-        elements.input.addEventListener("keydown", handleInputKeydown);
-        elements.menuToggle.addEventListener("click", () => elements.sidebar.classList.toggle('active'));
-        elements.closeSidebar.addEventListener("click", () => elements.sidebar.classList.remove('active'));
-        elements.sendBtn.addEventListener("click", sendMessage);
-        elements.newChatBtn.addEventListener("click", startNewChat);
-
-        document.querySelectorAll('.assistant-card').forEach(card => {
-            card.addEventListener('click', () => {
-                const botType = card.getAttribute('data-bot');
-                const prompts = {
-                    elearning: "Explain the concept of asynchronous programming in JavaScript.",
-                    shopping: "What are the best noise-cancelling headphones under $200?",
-                    technical: "How do I set up a basic Flask server in Python?"
-                };
-                if (prompts[botType]) {
-                    elements.input.value = prompts[botType];
-                    sendMessage();
-                }
-            });
-        });
-    }
-
     function initFromStorage() {
         try {
             const savedChats = localStorage.getItem('fspro_chats');
@@ -233,4 +209,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialize the application
     initFromStorage();
     setupEventListeners();
+});
+
+// Optional: Auto-focus input on keyboard open
+window.addEventListener('resize', () => {
+    const activeElement = document.activeElement;
+    if (window.innerHeight < 500 && activeElement.tagName === 'INPUT') {
+        activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 });
